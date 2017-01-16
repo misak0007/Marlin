@@ -8,3 +8,4 @@
 .\bdf2u8g.exe -b 32 -e 255 ISO10646_Kana.bdf ISO10646_Kana_5x7 dogm_font_data_ISO10646_Kana.h
 .\bdf2u8g.exe -b 32 -e 255 ISO10646_CN.bdf ISO10646_CN dogm_font_data_ISO10646_CN.h
 .\bdf2u8g.exe -b 32 -e 255 ISO10646_4_Greek.bdf ISO10646_Greek_5x7 dogm_font_data_ISO10646_Greek.h
+.\bdf2u8g.exe -b 32 -e 255 ISO8859_2.bdf ISO8859_2_5x7 dogm_font_data_ISO8859_2.h

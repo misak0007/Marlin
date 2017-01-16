@@ -50,6 +50,7 @@
 // ca         Catalan
 // cn         Chinese
 // cz         Czech
+// cz_utf8    Czech (UTF8)
 // de         German
 // el         Greek
 // el-gr      Greek (Greece)
@@ -283,7 +284,8 @@
  && DISABLED(DISPLAY_CHARSET_ISO10646_KANA) \
  && DISABLED(DISPLAY_CHARSET_ISO10646_GREEK) \
  && DISABLED(DISPLAY_CHARSET_ISO10646_CN) \
- && DISABLED(DISPLAY_CHARSET_ISO10646_TR)
+ && DISABLED(DISPLAY_CHARSET_ISO10646_TR) \
+ && DISABLED(DISPLAY_CHARSET_ISO8859_2)
   #define DISPLAY_CHARSET_ISO10646_1 // use the better font on full graphic displays.
 #endif
 

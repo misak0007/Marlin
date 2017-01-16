@@ -42,6 +42,8 @@
     #define MAPPER_ONE_TO_ONE
   #elif ENABLED(DISPLAY_CHARSET_ISO10646_TR)
     #define MAPPER_ONE_TO_ONE
+  #elif ENABLED(DISPLAY_CHARSET_ISO8859_2)
+    #define MAPPER_ONE_TO_ONE
   #endif
 #else // SIMULATE_ROMFONT
   #if DISPLAY_CHARSET_HD44780 == JAPANESE
@@ -345,6 +347,115 @@
     seen_82_83 = false;
     return 1;
   }
+
+#elif ENABLED(MAPPER_ISO8859_2)
+  // utf8 to ISO8859-2
+  char charset_mapper(const char c) {
+    static uint8_t utf_hi_char; // UTF-8 high part
+    static bool seen_c2 = false;
+    static bool seen_c3 = false;
+    static bool seen_c4 = false;
+    static bool seen_c5 = false;
+    static bool seen_cb = false;
+    uint8_t d = c;
+    if ( d >= 0x80u ) { // UTF-8 handling
+       	if ( d == 0xc2u && !seen_c2 ) {seen_c2 = true; return 0;}
+	else if ( d == 0xc3u && !seen_c3 ) {seen_c3 = true; return 0;}
+	else if ( d == 0xc4u && !seen_c4 ) {seen_c4 = true; return 0;}
+	else if ( d == 0xc5u && !seen_c5 ) {seen_c5 = true; return 0;}
+	else if ( d == 0xcbu && !seen_cb ) {seen_cb = true; return 0;}
+    	else if (seen_c2) {
+        	HARDWARE_CHAR_OUT((char)d) ;
+      	}
+    	else if (seen_c3) {
+		d = d + 0x40u;
+        	HARDWARE_CHAR_OUT((char)d) ;
+      	}
+    	else if (seen_c4) {
+        	switch(d) {
+          		case 0x84u: d = 0xa1u; break; // Ą
+          		case 0xbdu: d = 0xa5u; break; // Ľ
+          		case 0x85u: d = 0xb1u; break; // ą
+          		case 0xbeu: d = 0xb5u; break; // ľ
+          		case 0x82u: d = 0xc3u; break; // Ă
+          		case 0xb9u: d = 0xc5u; break; // Ĺ
+          		case 0x86u: d = 0xc6u; break; // Ć
+          		case 0x8cu: d = 0xc8u; break; // Č
+          		case 0x98u: d = 0xcau; break; // Ę
+          		case 0x9au: d = 0xccu; break; // Ě
+          		case 0x8eu: d = 0xcfu; break; // Ď
+          		case 0x90u: d = 0xd0u; break; // Đ
+          		case 0x83u: d = 0xe3u; break; // ă
+          		case 0xbau: d = 0xe5u; break; // ĺ
+          		case 0x87u: d = 0xe6u; break; // ć
+          		case 0x8du: d = 0xe8u; break; // č
+          		case 0x99u: d = 0xeau; break; // ę
+          		case 0x9bu: d = 0xecu; break; // ě
+          		case 0x8fu: d = 0xefu; break; // ď
+          		case 0x91u: d = 0xf0u; break; // đ
+          		default: d = '?';
+        	}
+        	HARDWARE_CHAR_OUT((char)d) ;
+      	}
+    	else if (seen_c5) {
+        	switch(d) {
+          		case 0x81u: d = 0xa3u; break; // Ł
+          		case 0x9au: d = 0xa6u; break; // Ś
+          		case 0xa0u: d = 0xa9u; break; // Š
+          		case 0x9eu: d = 0xaau; break; // Ş
+          		case 0xa4u: d = 0xabu; break; // Ť
+          		case 0xb9u: d = 0xacu; break; // Ź
+          		case 0xbdu: d = 0xaeu; break; // Ž
+          		case 0xbbu: d = 0xafu; break; // Ż
+          		case 0x82u: d = 0xb3u; break; // ł
+          		case 0x9bu: d = 0xb6u; break; // ś
+          		case 0xa1u: d = 0xb9u; break; // š
+          		case 0x9fu: d = 0xbau; break; // ş
+          		case 0xa5u: d = 0xbbu; break; // ť
+          		case 0xbau: d = 0xbcu; break; // ź
+          		case 0xbeu: d = 0xbeu; break; // ž
+          		case 0xbcu: d = 0xbfu; break; // ż
+          		case 0x94u: d = 0xc0u; break; // Ŕ
+          		case 0x83u: d = 0xd1u; break; // Ń
+          		case 0x87u: d = 0xd2u; break; // Ň
+          		case 0x90u: d = 0xd5u; break; // Ő
+          		case 0x98u: d = 0xd8u; break; // Ř
+          		case 0xaeu: d = 0xd9u; break; // Ů
+          		case 0xb8u: d = 0xdbu; break; // Ű
+          		case 0xa2u: d = 0xdeu; break; // Ţ
+          		case 0x95u: d = 0xe0u; break; // ŕ
+          		case 0x84u: d = 0xf1u; break; // ń
+          		case 0x88u: d = 0xf2u; break; // ň
+          		case 0x91u: d = 0xf5u; break; // ő
+          		case 0x99u: d = 0xf8u; break; // ř
+          		case 0xafu: d = 0xf9u; break; // ů
+          		case 0xb1u: d = 0xfbu; break; // ű
+          		case 0xa3u: d = 0xfeu; break; // ţ
+          		default: d = '?';
+        	}
+        	HARDWARE_CHAR_OUT((char)d) ;
+      	}
+    	else if (seen_cb) {
+        	switch(d) {
+          		case 0x98u: d = 0xa2u; break; // ˘
+          		case 0x9bu: d = 0xb2u; break; // ˛
+          		case 0x87u: d = 0xb7u; break; // ˇ
+          		case 0xd9u: d = 0xbdu; break; // ˝
+          		case 0x99u: d = 0xffu; break; // ˙
+          		default: d = '?';
+        	}
+        	HARDWARE_CHAR_OUT((char)d) ;
+      	}
+      	else {
+        	HARDWARE_CHAR_OUT((char) '?' );
+      	}
+    	}
+    else {
+      HARDWARE_CHAR_OUT((char) c );
+    }
+    seen_c2 = seen_c3 = seen_c4 = seen_c5 = seen_cb = false;
+    return 1;
+}
 
 #else
 
